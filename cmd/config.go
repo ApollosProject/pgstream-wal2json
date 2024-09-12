@@ -68,8 +68,8 @@ func parsePostgresListenerConfig() *stream.PostgresListenerConfig {
 	wal2jsonConfig := []string{}
 
 	if wal2jsonConfigStr != "" {
-		// split the string into a slice of strings, separated by commas
-		wal2jsonConfig = strings.Split(wal2jsonConfigStr, (","))
+		// split the string into a slice of strings, separated by semicolons
+		wal2jsonConfig = strings.Split(wal2jsonConfigStr, (";"))
 	}
 
 	return &stream.PostgresListenerConfig{
