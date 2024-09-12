@@ -1,5 +1,5 @@
 replace github.com/xataio/pgstream => ./pgstream
-module github.com/xataio/pgstream
+module github.com/ApollosProject/pgstream-wal2json
 
 go 1.22.2
 
