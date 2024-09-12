@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/xataio/pgstream/pkg/backoff"
@@ -63,9 +64,18 @@ func parsePostgresListenerConfig() *stream.PostgresListenerConfig {
 		return nil
 	}
 
+	wal2jsonConfigStr := viper.GetString("PGSTREAM_POSTGRES_LISTENER_WAL2JSON_CONFIG")
+	wal2jsonConfig := []string{}
+
+	if wal2jsonConfigStr != "" {
+		// split the string into a slice of strings, separated by commas
+		wal2jsonConfig = strings.Split(wal2jsonConfigStr, (","))
+	}
+
 	return &stream.PostgresListenerConfig{
 		Replication: pgreplication.Config{
-			PostgresURL: pgURL,
+			PostgresURL:    pgURL,
+			Wal2JsonConfig: wal2jsonConfig,
 		},
 	}
 }

@@ -20,7 +20,8 @@ type Handler struct {
 	pgReplicationSlotName string
 	pgConnBuilder         func() (pglib.Querier, error)
 
-	lsnParser replication.LSNParser
+	lsnParser      replication.LSNParser
+	wal2jsonConfig []string
 }
 
 type pgReplicationConn interface {
@@ -36,6 +37,7 @@ type Config struct {
 	// Name of the replication slot to listen on. If not provided, it defaults
 	// to "pgstream_<dbname>_slot".
 	ReplicationSlotName string
+	Wal2JsonConfig      []string
 }
 
 type Option func(h *Handler)
@@ -73,6 +75,7 @@ func NewHandler(ctx context.Context, cfg Config, opts ...Option) (*Handler, erro
 		pgReplicationSlotName: cfg.ReplicationSlotName,
 		pgConnBuilder:         connBuilder,
 		lsnParser:             &LSNParser{},
+		wal2jsonConfig:        cfg.Wal2JsonConfig,
 	}
 
 	for _, opt := range opts {
@@ -139,6 +142,11 @@ func (h *Handler) StartReplication(ctx context.Context) error {
 	h.logger.Trace("replication handler: set start LSN", logFields, loglib.Fields{
 		logLSNPosition: h.lsnParser.ToString(startPos),
 	})
+
+	if h.wal2jsonConfig != nil {
+		// combine the default plugin arguments with the custom ones
+		pluginArguments = append(pluginArguments, h.wal2jsonConfig...)
+	}
 
 	err = h.pgReplicationConn.StartReplication(
 		ctx, pglib.ReplicationConfig{

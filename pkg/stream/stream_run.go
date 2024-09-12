@@ -48,7 +48,8 @@ func Run(ctx context.Context, logger loglib.Logger, config *Config, instrumentat
 		var err error
 		replicationHandler, err = pgreplication.NewHandler(ctx,
 			config.Listener.Postgres.Replication,
-			pgreplication.WithLogger(logger))
+			pgreplication.WithLogger(logger),
+		)
 		if err != nil {
 			return fmt.Errorf("error setting up postgres replication handler: %w", err)
 		}
