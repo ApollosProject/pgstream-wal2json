@@ -5,8 +5,8 @@ package instrumentation
 import (
 	"context"
 
-	"github.com/xataio/pgstream/pkg/otel"
-	"github.com/xataio/pgstream/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/otel"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )

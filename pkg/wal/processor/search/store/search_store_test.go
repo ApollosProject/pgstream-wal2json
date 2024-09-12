@@ -10,13 +10,13 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
+	searchstoremocks "github.com/ApollosProject/pgstream-wal2json/internal/searchstore/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search"
+	searchmocks "github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search/mocks"
 	"github.com/rs/xid"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/internal/searchstore"
-	searchstoremocks "github.com/xataio/pgstream/internal/searchstore/mocks"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal/processor/search"
-	searchmocks "github.com/xataio/pgstream/pkg/wal/processor/search/mocks"
 )
 
 func TestStore_ApplySchemaChange(t *testing.T) {

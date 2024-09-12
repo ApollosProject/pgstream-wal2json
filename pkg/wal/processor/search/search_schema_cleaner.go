@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/xataio/pgstream/pkg/backoff"
-	loglib "github.com/xataio/pgstream/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
 )
 
 type cleaner interface {

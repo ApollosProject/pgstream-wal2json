@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"slices"
 
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/otel"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	schemaloginstrumentation "github.com/xataio/pgstream/pkg/schemalog/instrumentation"
-	schemalogpg "github.com/xataio/pgstream/pkg/schemalog/postgres"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/processor"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/otel"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	schemaloginstrumentation "github.com/ApollosProject/pgstream-wal2json/pkg/schemalog/instrumentation"
+	schemalogpg "github.com/ApollosProject/pgstream-wal2json/pkg/schemalog/postgres"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
 )
 
 // Translator is a decorator around a wal processor that populates the wal

@@ -5,7 +5,7 @@ package search
 import (
 	"time"
 
-	"github.com/xataio/pgstream/pkg/backoff"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
 )
 
 type IndexerConfig struct {

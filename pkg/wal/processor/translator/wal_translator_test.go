@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"testing"
 
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	schemalogmocks "github.com/ApollosProject/pgstream-wal2json/pkg/schemalog/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/mocks"
 	"github.com/stretchr/testify/require"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	schemalogmocks "github.com/xataio/pgstream/pkg/schemalog/mocks"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/processor"
-	"github.com/xataio/pgstream/pkg/wal/processor/mocks"
 )
 
 func TestTranslator_ProcessWALEvent(t *testing.T) {

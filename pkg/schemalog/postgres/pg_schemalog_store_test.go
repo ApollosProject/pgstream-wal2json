@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"testing"
 
+	pglib "github.com/ApollosProject/pgstream-wal2json/internal/postgres"
+	pgmocks "github.com/ApollosProject/pgstream-wal2json/internal/postgres/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/xid"
 	"github.com/stretchr/testify/require"
-	pglib "github.com/xataio/pgstream/internal/postgres"
-	pgmocks "github.com/xataio/pgstream/internal/postgres/mocks"
-	"github.com/xataio/pgstream/pkg/schemalog"
 )
 
 func TestStore_Fetch(t *testing.T) {

@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/xataio/pgstream/pkg/backoff"
-	"github.com/xataio/pgstream/pkg/kafka"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 // Checkpointer is a kafka implementation of the wal checkpointer. It commits

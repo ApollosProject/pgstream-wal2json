@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"testing"
 
+	pglib "github.com/ApollosProject/pgstream-wal2json/internal/postgres"
+	pgmocks "github.com/ApollosProject/pgstream-wal2json/internal/postgres/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
 	"github.com/stretchr/testify/require"
-	pglib "github.com/xataio/pgstream/internal/postgres"
-	pgmocks "github.com/xataio/pgstream/internal/postgres/mocks"
-	"github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal/replication"
 )
 
 func TestHandler_StartReplication(t *testing.T) {

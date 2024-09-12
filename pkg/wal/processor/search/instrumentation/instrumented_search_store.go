@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/xataio/pgstream/pkg/otel"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal/processor/search"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/otel"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"

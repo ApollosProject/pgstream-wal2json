@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	pgmigrations "github.com/xataio/pgstream/migrations/postgres"
+	pgmigrations "github.com/ApollosProject/pgstream-wal2json/migrations/postgres"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"

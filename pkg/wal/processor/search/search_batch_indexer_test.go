@@ -10,12 +10,12 @@ import (
 	"testing"
 	"time"
 
-	syncmocks "github.com/xataio/pgstream/internal/sync/mocks"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/checkpointer"
-	"github.com/xataio/pgstream/pkg/wal/processor"
+	syncmocks "github.com/ApollosProject/pgstream-wal2json/internal/sync/mocks"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/rs/xid"

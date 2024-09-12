@@ -10,12 +10,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/xataio/pgstream/pkg/backoff"
-	backoffmocks "github.com/xataio/pgstream/pkg/backoff/mocks"
-	"github.com/xataio/pgstream/pkg/kafka"
-	kafkamocks "github.com/xataio/pgstream/pkg/kafka/mocks"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
+	backoffmocks "github.com/ApollosProject/pgstream-wal2json/pkg/backoff/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	kafkamocks "github.com/ApollosProject/pgstream-wal2json/pkg/kafka/mocks"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 func TestCheckpointer_CommitOffsets(t *testing.T) {

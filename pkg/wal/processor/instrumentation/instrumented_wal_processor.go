@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/xataio/pgstream/pkg/otel"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/processor"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/otel"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
 
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"

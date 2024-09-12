@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/stream"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	kafkalistener "github.com/ApollosProject/pgstream-wal2json/pkg/wal/listener/kafka"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/pkg/kafka"
-	"github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/stream"
-	"github.com/xataio/pgstream/pkg/wal"
-	kafkalistener "github.com/xataio/pgstream/pkg/wal/listener/kafka"
 )
 
 func Test_PostgresToKafka(t *testing.T) {

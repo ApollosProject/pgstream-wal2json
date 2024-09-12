@@ -5,7 +5,7 @@ package postgres
 import (
 	"github.com/jackc/pglogrepl"
 
-	"github.com/xataio/pgstream/pkg/wal/replication"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
 )
 
 // LSNParser is the postgres implementation of the replication.LSNParser

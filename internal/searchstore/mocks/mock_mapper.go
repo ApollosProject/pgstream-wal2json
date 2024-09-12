@@ -2,7 +2,7 @@
 
 package mocks
 
-import "github.com/xataio/pgstream/internal/searchstore"
+import "github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
 
 type Mapper struct {
 	GetDefaultIndexSettingsFn func() map[string]any

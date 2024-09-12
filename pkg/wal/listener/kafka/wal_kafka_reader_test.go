@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	kafkamocks "github.com/ApollosProject/pgstream-wal2json/pkg/kafka/mocks"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/pkg/kafka"
-	kafkamocks "github.com/xataio/pgstream/pkg/kafka/mocks"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal"
 )
 
 func TestReader_Listen(t *testing.T) {

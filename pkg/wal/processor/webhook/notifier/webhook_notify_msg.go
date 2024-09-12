@@ -5,9 +5,9 @@ package notifier
 import (
 	"fmt"
 
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
 )
 
 type notifyMsg struct {

@@ -17,7 +17,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/xataio/pgstream/pkg/stream"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/stream"
 )
 
 func TestMain(m *testing.M) {

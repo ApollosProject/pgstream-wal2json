@@ -11,15 +11,15 @@ import (
 	"testing"
 	"time"
 
+	synclib "github.com/ApollosProject/pgstream-wal2json/internal/sync"
+	syncmocks "github.com/ApollosProject/pgstream-wal2json/internal/sync/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	kafkamocks "github.com/ApollosProject/pgstream-wal2json/pkg/kafka/mocks"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer"
 	"github.com/stretchr/testify/require"
-	synclib "github.com/xataio/pgstream/internal/sync"
-	syncmocks "github.com/xataio/pgstream/internal/sync/mocks"
-	"github.com/xataio/pgstream/pkg/kafka"
-	kafkamocks "github.com/xataio/pgstream/pkg/kafka/mocks"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/checkpointer"
 
 	"golang.org/x/sync/semaphore"
 )

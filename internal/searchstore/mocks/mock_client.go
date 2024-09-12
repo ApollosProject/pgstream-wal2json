@@ -6,7 +6,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/xataio/pgstream/internal/searchstore"
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
 )
 
 type Client struct {

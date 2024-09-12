@@ -5,10 +5,10 @@ package cmd
 import (
 	"context"
 
+	"github.com/ApollosProject/pgstream-wal2json/internal/log/zerolog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/stream"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/xataio/pgstream/internal/log/zerolog"
-	"github.com/xataio/pgstream/pkg/stream"
 )
 
 var runCmd = &cobra.Command{

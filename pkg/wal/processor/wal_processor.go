@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 // Processor is a general interface to receive and process a wal event

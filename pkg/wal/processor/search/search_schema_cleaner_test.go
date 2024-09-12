@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff/mocks"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/pkg/backoff"
-	"github.com/xataio/pgstream/pkg/backoff/mocks"
-	loglib "github.com/xataio/pgstream/pkg/log"
 )
 
 func TestSchemaCleaner_deleteSchema(t *testing.T) {

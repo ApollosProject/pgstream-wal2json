@@ -7,9 +7,9 @@ import (
 	"errors"
 	"fmt"
 
-	pglib "github.com/xataio/pgstream/internal/postgres"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal/replication"
+	pglib "github.com/ApollosProject/pgstream-wal2json/internal/postgres"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
 )
 
 // Handler handles the postgres replication slot operations

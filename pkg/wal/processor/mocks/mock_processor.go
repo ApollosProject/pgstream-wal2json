@@ -5,7 +5,7 @@ package mocks
 import (
 	"context"
 
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 type Processor struct {

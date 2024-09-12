@@ -10,10 +10,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	httplib "github.com/xataio/pgstream/internal/http"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store"
+	httplib "github.com/ApollosProject/pgstream-wal2json/internal/http"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store"
 )
 
 type Server struct {

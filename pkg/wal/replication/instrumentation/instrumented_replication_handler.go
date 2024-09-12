@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/xataio/pgstream/pkg/otel"
-	"github.com/xataio/pgstream/pkg/wal/replication"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/otel"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
 
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"

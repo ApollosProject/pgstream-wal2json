@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	"github.com/xataio/pgstream/pkg/wal/replication"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
 )
 
 type LSNParser struct {

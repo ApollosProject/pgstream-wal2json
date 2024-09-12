@@ -5,7 +5,7 @@ package mocks
 import (
 	"context"
 
-	"github.com/xataio/pgstream/internal/postgres"
+	"github.com/ApollosProject/pgstream-wal2json/internal/postgres"
 )
 
 type Querier struct {

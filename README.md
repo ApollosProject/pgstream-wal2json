@@ -3,9 +3,9 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/xataio/pgstream/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-green" alt="License - Apache 2.0"></a>&nbsp;
-  <a href="https://github.com/xataio/pgstream/actions?query=branch%3Amain"><img src="https://github.com/xataio/pgstream/actions/workflows/build.yml/badge.svg" alt="CI Build"></a> &nbsp;
-  <a href="https://pkg.go.dev/github.com/xataio/pgstream"><img src="https://pkg.go.dev/badge/github.com/xataio/pgstream.svg" alt="Go Reference"></a>&nbsp;
+  <a href="https://github.com/ApollosProject/pgstream-wal2json/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-green" alt="License - Apache 2.0"></a>&nbsp;
+  <a href="https://github.com/ApollosProject/pgstream-wal2json/actions?query=branch%3Amain"><img src="https://github.com/ApollosProject/pgstream-wal2json/actions/workflows/build.yml/badge.svg" alt="CI Build"></a> &nbsp;
+  <a href="https://pkg.go.dev/github.com/ApollosProject/pgstream-wal2json"><img src="https://pkg.go.dev/badge/github.com/ApollosProject/pgstream-wal2json.svg" alt="Go Reference"></a>&nbsp;
   <a href="https://xata.io/discord"><img src="https://img.shields.io/discord/996791218879086662?label=Discord" alt="Discord"></a> &nbsp;
   <a href="https://twitter.com/xata"><img src="https://img.shields.io/twitter/follow/xata?style=flat" alt="X (formerly Twitter) Follow" /> </a>
 </p>
@@ -49,14 +49,14 @@
 
 ##### Binaries
 
-Binaries are available for Linux, macOS & Windows, check our [Releases](https://github.com/xataio/pgstream/releases).
+Binaries are available for Linux, macOS & Windows, check our [Releases](https://github.com/ApollosProject/pgstream-wal2json/releases).
 
 ##### From source
 
 To install `pgstream` from the source, run the following command:
 
 ```sh
-go install github.com/xataio/pgstream@latest
+go install github.com/ApollosProject/pgstream-wal2json@latest
 ```
 
 ##### From package manager - Homebrew
@@ -230,7 +230,7 @@ One of exponential/constant backoff policies can be provided for the search stor
 
 One of the main differentiators of pgstream is the fact that it tracks and replicates schema changes automatically. It relies on SQL triggers that will populate a Postgres table (`pgstream.schema_log`) containing a history log of all DDL changes for a given schema. Whenever a schema change occurs, this trigger creates a new row in the schema log table with the schema encoded as a JSON value. This table tracks all the schema changes, forming a linearised change log that is then parsed and used within the pgstream pipeline to identify modifications and push the relevant changes downstream.
 
-The detailed SQL used can be found in the [migrations folder](https://github.com/xataio/pgstream/tree/main/migrations/postgres).
+The detailed SQL used can be found in the [migrations folder](https://github.com/ApollosProject/pgstream-wal2json/tree/main/migrations/postgres).
 
 The schema and data changes are part of the same linear stream - the downstream consumers always observe the schema changes as soon as they happen, before any data arrives that relies on the new schema. This prevents data loss and manual intervention.
 

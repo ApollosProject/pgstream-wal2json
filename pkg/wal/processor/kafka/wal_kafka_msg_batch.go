@@ -3,8 +3,8 @@
 package kafka
 
 import (
-	"github.com/xataio/pgstream/pkg/kafka"
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 type msg struct {

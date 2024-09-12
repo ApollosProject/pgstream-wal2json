@@ -12,9 +12,9 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
 	"github.com/opensearch-project/opensearch-go"
 	"github.com/opensearch-project/opensearch-go/opensearchapi"
-	"github.com/xataio/pgstream/internal/searchstore"
 )
 
 type Client struct {

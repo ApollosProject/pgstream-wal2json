@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
+	replicationmocks "github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication/mocks"
 	"github.com/stretchr/testify/require"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/replication"
-	replicationmocks "github.com/xataio/pgstream/pkg/wal/replication/mocks"
 )
 
 func TestListener_Listen(t *testing.T) {

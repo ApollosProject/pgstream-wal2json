@@ -11,13 +11,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore/elasticsearch"
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore/opensearch"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/stream"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search/store"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/internal/searchstore"
-	"github.com/xataio/pgstream/internal/searchstore/elasticsearch"
-	"github.com/xataio/pgstream/internal/searchstore/opensearch"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/stream"
-	"github.com/xataio/pgstream/pkg/wal/processor/search/store"
 )
 
 func Test_PostgresToSearch(t *testing.T) {

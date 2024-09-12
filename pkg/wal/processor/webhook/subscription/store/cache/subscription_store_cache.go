@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store"
 )
 
 // Store is a wrapper around a subscription store that keeps an in memory cache

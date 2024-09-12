@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 
-	pglib "github.com/xataio/pgstream/internal/postgres"
-	"github.com/xataio/pgstream/pkg/schemalog"
+	pglib "github.com/ApollosProject/pgstream-wal2json/internal/postgres"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 
 	"github.com/jackc/pgx/v5"
 )

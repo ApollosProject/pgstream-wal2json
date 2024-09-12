@@ -12,12 +12,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store/mocks"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store/mocks"
 )
 
 func TestSubscriptionServer_subscribe(t *testing.T) {

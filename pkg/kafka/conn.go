@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	tlslib "github.com/xataio/pgstream/pkg/tls"
+	tlslib "github.com/ApollosProject/pgstream-wal2json/pkg/tls"
 
 	"github.com/segmentio/kafka-go"
 )

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/pkg/backoff"
-	loglib "github.com/xataio/pgstream/pkg/log"
 )
 
 func TestStoreRetrier_SendDocuments(t *testing.T) {

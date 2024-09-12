@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore/opensearch"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/internal/searchstore/opensearch"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal/processor/search"
 )
 
 const termByteLengthLimit = 32766

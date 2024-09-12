@@ -12,13 +12,13 @@ import (
 	"runtime/debug"
 	"sync"
 
-	httplib "github.com/xataio/pgstream/internal/http"
-	synclib "github.com/xataio/pgstream/internal/sync"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/checkpointer"
-	"github.com/xataio/pgstream/pkg/wal/processor"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
+	httplib "github.com/ApollosProject/pgstream-wal2json/internal/http"
+	synclib "github.com/ApollosProject/pgstream-wal2json/internal/sync"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
 )
 
 // Notifier represents the process that notifies any subscribed webhooks when

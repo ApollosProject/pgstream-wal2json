@@ -6,15 +6,15 @@ import (
 	"errors"
 	"time"
 
-	"github.com/xataio/pgstream/pkg/kafka"
-	kafkacheckpoint "github.com/xataio/pgstream/pkg/wal/checkpointer/kafka"
-	kafkaprocessor "github.com/xataio/pgstream/pkg/wal/processor/kafka"
-	"github.com/xataio/pgstream/pkg/wal/processor/search"
-	"github.com/xataio/pgstream/pkg/wal/processor/search/store"
-	"github.com/xataio/pgstream/pkg/wal/processor/translator"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/notifier"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/server"
-	pgreplication "github.com/xataio/pgstream/pkg/wal/replication/postgres"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	kafkacheckpoint "github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer/kafka"
+	kafkaprocessor "github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/kafka"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search/store"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/translator"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/notifier"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/server"
+	pgreplication "github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication/postgres"
 )
 
 type Config struct {

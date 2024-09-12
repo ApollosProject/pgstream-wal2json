@@ -7,10 +7,10 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store/mocks"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store/mocks"
 )
 
 func TestSubscriptionStoreCache_NewSubscriptionStoreCache(t *testing.T) {

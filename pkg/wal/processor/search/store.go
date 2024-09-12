@@ -5,7 +5,7 @@ package search
 import (
 	"context"
 
-	"github.com/xataio/pgstream/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 )
 
 type Store interface {

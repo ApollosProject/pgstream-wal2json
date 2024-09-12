@@ -8,9 +8,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/xataio/pgstream/pkg/kafka"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 // Reader is a kafka reader that listens to wal events.

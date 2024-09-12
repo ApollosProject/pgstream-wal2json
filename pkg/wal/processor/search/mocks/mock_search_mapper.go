@@ -2,7 +2,7 @@
 
 package mocks
 
-import "github.com/xataio/pgstream/pkg/schemalog"
+import "github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 
 type Mapper struct {
 	ColumnToSearchMappingFn func(column schemalog.Column) (map[string]any, error)

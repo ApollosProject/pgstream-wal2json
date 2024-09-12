@@ -1,4 +1,3 @@
-replace github.com/xataio/pgstream => ./pgstream
 module github.com/ApollosProject/pgstream-wal2json
 
 go 1.22.2
@@ -27,7 +26,9 @@ require (
 	github.com/testcontainers/testcontainers-go/modules/kafka v0.31.0
 	github.com/testcontainers/testcontainers-go/modules/opensearch v0.31.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.31.0
+	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/metric v1.27.0
+	go.opentelemetry.io/otel/trace v1.27.0
 	golang.org/x/sync v0.7.0
 )
 
@@ -106,8 +107,6 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0 // indirect
-	go.opentelemetry.io/otel v1.27.0 // indirect
-	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
@@ -121,4 +120,3 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-

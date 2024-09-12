@@ -12,16 +12,16 @@ import (
 	"testing"
 	"time"
 
+	httplib "github.com/ApollosProject/pgstream-wal2json/internal/http"
+	httpmocks "github.com/ApollosProject/pgstream-wal2json/internal/http/mocks"
+	syncmocks "github.com/ApollosProject/pgstream-wal2json/internal/sync/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription/store/mocks"
 	"github.com/stretchr/testify/require"
-	httplib "github.com/xataio/pgstream/internal/http"
-	httpmocks "github.com/xataio/pgstream/internal/http/mocks"
-	syncmocks "github.com/xataio/pgstream/internal/sync/mocks"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/checkpointer"
-	"github.com/xataio/pgstream/pkg/wal/processor"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription/store/mocks"
 )
 
 func TestNotifier_ProcessWALEvent(t *testing.T) {

@@ -5,9 +5,9 @@ package postgres
 import (
 	"context"
 
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/replication"
-	pgreplication "github.com/xataio/pgstream/pkg/wal/replication/postgres"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
+	pgreplication "github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication/postgres"
 )
 
 // Checkpointer is a postgres implementation of a wal checkpointer. It syncs the

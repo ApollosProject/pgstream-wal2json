@@ -5,8 +5,8 @@ package kafka
 import (
 	"fmt"
 
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
 	"github.com/segmentio/kafka-go"
-	loglib "github.com/xataio/pgstream/pkg/log"
 )
 
 func makeLogger(logFn func(msg string, fields ...loglib.Fields)) kafka.LoggerFunc {

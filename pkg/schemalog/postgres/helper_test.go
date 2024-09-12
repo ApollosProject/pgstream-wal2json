@@ -5,8 +5,8 @@ package postgres
 import (
 	"fmt"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 	"github.com/rs/xid"
-	"github.com/xataio/pgstream/pkg/schemalog"
 )
 
 type mockRow struct {

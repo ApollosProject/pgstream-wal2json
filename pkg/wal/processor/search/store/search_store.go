@@ -9,13 +9,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/xataio/pgstream/internal/searchstore"
-	elasticsearchstore "github.com/xataio/pgstream/internal/searchstore/elasticsearch"
-	opensearchstore "github.com/xataio/pgstream/internal/searchstore/opensearch"
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
+	elasticsearchstore "github.com/ApollosProject/pgstream-wal2json/internal/searchstore/elasticsearch"
+	opensearchstore "github.com/ApollosProject/pgstream-wal2json/internal/searchstore/opensearch"
 
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal/processor/search"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search"
 )
 
 type Store struct {

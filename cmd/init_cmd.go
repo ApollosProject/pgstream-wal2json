@@ -5,7 +5,7 @@ package cmd
 import (
 	"context"
 
-	"github.com/xataio/pgstream/pkg/stream"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/stream"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/pterm/pterm"

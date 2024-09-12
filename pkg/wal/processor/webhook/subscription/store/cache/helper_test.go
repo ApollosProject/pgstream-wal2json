@@ -5,7 +5,7 @@ package cache
 import (
 	"errors"
 
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
 )
 
 var errTest = errors.New("oh noes")

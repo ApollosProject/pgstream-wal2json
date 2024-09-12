@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/xataio/pgstream/pkg/backoff"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/backoff"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
 )
 
 // StoreRetrier applies a retry strategy to failed search store operations.

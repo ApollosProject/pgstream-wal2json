@@ -6,7 +6,7 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/xataio/pgstream/pkg/kafka"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
 )
 
 type Writer struct {

@@ -8,7 +8,7 @@ builds:
   - id: build_noncgo
     binary: pgstream
     ldflags:
-      - -X github.com/xataio/pgstream/cmd.Version={{ .Version }}
+      - -X github.com/ApollosProject/pgstream-wal2json/cmd.Version={{ .Version }}
     env:
       - CGO_ENABLED=0
     goos:

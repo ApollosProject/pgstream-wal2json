@@ -7,7 +7,7 @@ import (
 
 	"github.com/rs/zerolog"
 
-	loglib "github.com/xataio/pgstream/pkg/log"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
 )
 
 type Logger struct {

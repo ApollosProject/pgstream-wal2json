@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/xataio/pgstream/internal/log/zerolog"
-	loglib "github.com/xataio/pgstream/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/internal/log/zerolog"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
 )
 
 var logger loglib.Logger

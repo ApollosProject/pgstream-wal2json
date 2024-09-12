@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
-	pglib "github.com/xataio/pgstream/internal/postgres"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/wal/processor/webhook/subscription"
+	pglib "github.com/ApollosProject/pgstream-wal2json/internal/postgres"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/webhook/subscription"
 )
 
 type Store struct {

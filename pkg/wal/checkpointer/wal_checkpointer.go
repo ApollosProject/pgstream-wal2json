@@ -5,7 +5,7 @@ package checkpointer
 import (
 	"context"
 
-	"github.com/xataio/pgstream/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 )
 
 // Checkpoint defines the way to confirm the positions that have been read.

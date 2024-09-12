@@ -9,13 +9,13 @@ import (
 	"runtime/debug"
 	"time"
 
-	synclib "github.com/xataio/pgstream/internal/sync"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/checkpointer"
-	"github.com/xataio/pgstream/pkg/wal/processor"
-	"github.com/xataio/pgstream/pkg/wal/replication"
+	synclib "github.com/ApollosProject/pgstream-wal2json/internal/sync"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
 )
 
 // BatchIndexer is the environment for ingesting the WAL logical

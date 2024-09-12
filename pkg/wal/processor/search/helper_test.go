@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
 	"github.com/rs/xid"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal"
 )
 
 type mockAdapter struct {

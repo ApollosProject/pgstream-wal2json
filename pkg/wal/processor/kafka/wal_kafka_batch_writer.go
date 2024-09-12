@@ -10,14 +10,14 @@ import (
 	"runtime/debug"
 	"time"
 
-	synclib "github.com/xataio/pgstream/internal/sync"
-	"github.com/xataio/pgstream/pkg/kafka"
-	kafkainstrumentation "github.com/xataio/pgstream/pkg/kafka/instrumentation"
-	loglib "github.com/xataio/pgstream/pkg/log"
-	"github.com/xataio/pgstream/pkg/otel"
-	"github.com/xataio/pgstream/pkg/wal"
-	"github.com/xataio/pgstream/pkg/wal/checkpointer"
-	"github.com/xataio/pgstream/pkg/wal/processor"
+	synclib "github.com/ApollosProject/pgstream-wal2json/internal/sync"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/kafka"
+	kafkainstrumentation "github.com/ApollosProject/pgstream-wal2json/pkg/kafka/instrumentation"
+	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/otel"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/checkpointer"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor"
 )
 
 // BatchWriter is a kafka writer that uses batches to send the data to the

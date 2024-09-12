@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/xataio/pgstream/internal/searchstore"
-	"github.com/xataio/pgstream/pkg/schemalog"
-	"github.com/xataio/pgstream/pkg/wal/processor/search"
+	"github.com/ApollosProject/pgstream-wal2json/internal/searchstore"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/schemalog"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/processor/search"
 )
 
 // Adapter converts from/to search types and opensearch types

@@ -6,8 +6,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/xataio/pgstream/pkg/wal/replication"
-	replicationmocks "github.com/xataio/pgstream/pkg/wal/replication/mocks"
+	"github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication"
+	replicationmocks "github.com/ApollosProject/pgstream-wal2json/pkg/wal/replication/mocks"
 )
 
 const (

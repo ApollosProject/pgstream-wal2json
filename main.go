@@ -5,7 +5,7 @@ package main
 import (
 	"os"
 
-	"github.com/xataio/pgstream/cmd"
+	"github.com/ApollosProject/pgstream-wal2json/cmd"
 )
 
 func main() {
