@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"sync"
 	"testing"
@@ -94,6 +95,33 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 			wantErr: nil,
 		},
 		{
+			name: "ok - subscription headers are carried onto the notify message",
+			store: &mocks.Store{
+				GetSubscriptionsFn: func(ctx context.Context, action, schema, table string) ([]*subscription.Subscription, error) {
+					sub := testSubscription("url-1")
+					sub.Headers = map[string]string{"x-api-key": "secret"}
+					return []*subscription.Subscription{sub}, nil
+				},
+			},
+			weightedSemaphore: &syncmocks.WeightedSemaphore{
+				TryAcquireFn: func(i int64) bool {
+					require.Equal(t, int64(len(testPayload)+len("url-1")+len("x-api-key")+len("secret")), i)
+					return true
+				},
+			},
+			event: testEvent,
+
+			wantMsgs: []*notifyMsg{{
+				targets: []notifyTarget{{
+					url:     "url-1",
+					headers: map[string]string{"x-api-key": "secret"},
+				}},
+				payload:        testPayload,
+				commitPosition: testCommitPos,
+			}},
+			wantErr: nil,
+		},
+		{
 			name: "error - getting subscriptions",
 			store: &mocks.Store{
 				GetSubscriptionsFn: func(ctx context.Context, action, schema, table string) ([]*subscription.Subscription, error) {
@@ -177,6 +205,72 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 				msgs = append(msgs, msg)
 			}
 			require.Equal(t, tc.wantMsgs, msgs)
+		})
+	}
+}
+
+func TestNotifier_sendWebhook(t *testing.T) {
+	t.Parallel()
+
+	payload := []byte(`{"data":{}}`)
+
+	tests := []struct {
+		name    string
+		headers map[string]string
+
+		wantContentType string
+		wantAPIKey      string
+	}{
+		{
+			name:            "headers from the subscription are sent",
+			headers:         map[string]string{"x-api-key": "secret", "Content-Type": "application/vnd.custom+json"},
+			wantContentType: "application/vnd.custom+json",
+			wantAPIKey:      "secret",
+		},
+		{
+			name:            "subscription without headers still sends",
+			headers:         nil,
+			wantContentType: "application/json",
+		},
+		{
+			name:            "empty headers still sends",
+			headers:         map[string]string{},
+			wantContentType: "application/json",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			var gotHeader http.Header
+			var gotMethod string
+			var gotBody []byte
+			n := New(&Config{URLWorkerCount: 1}, &mocks.Store{})
+			n.client = &httpmocks.Client{
+				DoFn: func(r *http.Request) (*http.Response, error) {
+					gotHeader = r.Header.Clone()
+					gotMethod = r.Method
+					body, err := io.ReadAll(r.Body)
+					require.NoError(t, err)
+					gotBody = body
+					return &http.Response{StatusCode: http.StatusOK, Body: http.NoBody}, nil
+				},
+			}
+
+			err := n.notify(context.Background(), &notifyMsg{
+				targets: []notifyTarget{{
+					url:     "http://example.test/change_data",
+					headers: tc.headers,
+				}},
+				payload: payload,
+			})
+			require.NoError(t, err)
+			require.Equal(t, http.MethodPost, gotMethod)
+			require.Equal(t, payload, gotBody)
+			require.Equal(t, tc.wantContentType, gotHeader.Get("Content-Type"))
+			require.Equal(t, tc.wantAPIKey, gotHeader.Get("x-api-key"))
 		})
 	}
 }

@@ -4,6 +4,7 @@ package postgres
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	pglib "github.com/ApollosProject/pgstream-wal2json/internal/postgres"
@@ -53,10 +54,15 @@ func WithLogger(l loglib.Logger) Option {
 }
 
 func (s *Store) CreateSubscription(ctx context.Context, subscription *subscription.Subscription) error {
+	headers, err := headersParam(subscription.Headers)
+	if err != nil {
+		return err
+	}
+	// Re-subscribing the same url/schema/table replaces headers, same as event_types.
 	query := fmt.Sprintf(`
-	INSERT INTO %s(url, schema_name, table_name, event_types) VALUES($1, $2, $3, $4)
-	ON CONFLICT (url,schema_name,table_name) DO UPDATE SET event_types = EXCLUDED.event_types;`, subscriptionsTable())
-	_, err := s.conn.Exec(ctx, query, subscription.URL, subscription.Schema, subscription.Table, subscription.EventTypes)
+	INSERT INTO %s(url, schema_name, table_name, event_types, headers) VALUES($1, $2, $3, $4, $5::jsonb)
+	ON CONFLICT (url,schema_name,table_name) DO UPDATE SET event_types = EXCLUDED.event_types, headers = EXCLUDED.headers;`, subscriptionsTable())
+	_, err = s.conn.Exec(ctx, query, subscription.URL, subscription.Schema, subscription.Table, subscription.EventTypes, headers)
 	return err
 }
 
@@ -81,7 +87,7 @@ func (s *Store) GetSubscriptions(ctx context.Context, action, schema, table stri
 	subscriptions := []*subscription.Subscription{}
 	for rows.Next() {
 		subscription := &subscription.Subscription{}
-		if err := rows.Scan(&subscription.URL, &subscription.Schema, &subscription.Table, &subscription.EventTypes); err != nil {
+		if err := rows.Scan(&subscription.URL, &subscription.Schema, &subscription.Table, &subscription.EventTypes, &subscription.Headers); err != nil {
 			return nil, fmt.Errorf("scanning subscription row: %w", err)
 		}
 
@@ -97,13 +103,20 @@ func (s *Store) createTable(ctx context.Context) error {
 	schema_name TEXT,
 	table_name TEXT,
 	event_types TEXT[],
+	headers JSONB,
 	PRIMARY KEY(url,schema_name,table_name))`, subscriptionsTable())
-	_, err := s.conn.Exec(ctx, query)
+	if _, err := s.conn.Exec(ctx, query); err != nil {
+		return err
+	}
+	// webhook_subscriptions is created here, not by the schema-log migrator.
+	// Existing installs need the column added in place.
+	alter := fmt.Sprintf(`ALTER TABLE %s ADD COLUMN IF NOT EXISTS headers JSONB`, subscriptionsTable())
+	_, err := s.conn.Exec(ctx, alter)
 	return err
 }
 
 func (s *Store) buildGetQuery(action, schema, table string) (string, []any) {
-	query := fmt.Sprintf(`SELECT url, schema_name, table_name, event_types FROM %s`, subscriptionsTable())
+	query := fmt.Sprintf(`SELECT url, schema_name, table_name, event_types, headers FROM %s`, subscriptionsTable())
 
 	separator := func(params []any) string {
 		if len(params) == 0 {
@@ -130,4 +143,18 @@ func (s *Store) buildGetQuery(action, schema, table string) (string, []any) {
 
 func subscriptionsTable() string {
 	return fmt.Sprintf("%s.%s", pgstreamSchema, subscriptionsTableName)
+}
+
+// headersParam encodes headers as a JSON string for a jsonb cast.
+// Nil and empty maps are stored as NULL so older rows and header-less
+// subscriptions stay equivalent.
+func headersParam(headers map[string]string) (any, error) {
+	if len(headers) == 0 {
+		return nil, nil
+	}
+	b, err := json.Marshal(headers)
+	if err != nil {
+		return nil, fmt.Errorf("encoding subscription headers: %w", err)
+	}
+	return string(b), nil
 }

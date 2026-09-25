@@ -133,7 +133,7 @@ func (n *Notifier) Notify(ctx context.Context) error {
 			n.queueBytesSema.Release(int64(msg.size()))
 			if err != nil {
 				n.logger.Error(err, "sending webhook event", loglib.Fields{
-					"urls":            msg.urls,
+					"urls":            msg.urls(),
 					"commit position": msg.commitPosition,
 					"payload":         string(msg.payload),
 				})
@@ -153,20 +153,20 @@ func (n *Notifier) Close() error {
 }
 
 func (n *Notifier) notify(ctx context.Context, msg *notifyMsg) error {
-	n.logger.Trace("notifying", loglib.Fields{"urls": msg.urls})
-	if len(msg.urls) > 0 {
-		urlChan := make(chan string, n.workerCount)
+	n.logger.Trace("notifying", loglib.Fields{"urls": msg.urls()})
+	if len(msg.targets) > 0 {
+		targetChan := make(chan notifyTarget, n.workerCount)
 		wg := &sync.WaitGroup{}
 		for i := 0; i < int(n.workerCount); i++ {
 			wg.Add(1)
-			go n.webhookWorker(ctx, wg, msg.payload, urlChan)
+			go n.webhookWorker(ctx, wg, msg.payload, targetChan)
 		}
 
-		for _, url := range msg.urls {
-			urlChan <- url
+		for _, target := range msg.targets {
+			targetChan <- target
 		}
 
-		close(urlChan)
+		close(targetChan)
 		wg.Wait()
 	}
 
@@ -179,24 +179,30 @@ func (n *Notifier) notify(ctx context.Context, msg *notifyMsg) error {
 	return nil
 }
 
-func (n *Notifier) webhookWorker(ctx context.Context, wg *sync.WaitGroup, payload []byte, urls <-chan string) {
+func (n *Notifier) webhookWorker(ctx context.Context, wg *sync.WaitGroup, payload []byte, targets <-chan notifyTarget) {
 	defer wg.Done()
-	for url := range urls {
-		if err := n.sendWebhook(ctx, payload, url); err != nil {
+	for target := range targets {
+		if err := n.sendWebhook(ctx, payload, target); err != nil {
 			n.logger.Error(err, "sending webhook payload", loglib.Fields{
 				"payload": payload,
-				"url":     url,
+				"url":     target.url,
 			})
 			continue
 		}
 	}
 }
 
-func (n *Notifier) sendWebhook(ctx context.Context, payload []byte, url string) error {
-	n.logger.Trace("sending webhook", loglib.Fields{"url": url})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
+func (n *Notifier) sendWebhook(ctx context.Context, payload []byte, target notifyTarget) error {
+	n.logger.Trace("sending webhook", loglib.Fields{"url": target.url})
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, target.url, bytes.NewBuffer(payload))
 	if err != nil {
 		return fmt.Errorf("building webhook payload request: %w", err)
+	}
+	for k, v := range target.headers {
+		req.Header.Set(k, v)
+	}
+	if req.Header.Get("Content-Type") == "" {
+		req.Header.Set("Content-Type", "application/json")
 	}
 
 	resp, err := n.client.Do(req)

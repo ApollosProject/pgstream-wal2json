@@ -55,6 +55,23 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			wantStatusCode: http.StatusCreated,
 		},
 		{
+			name: "ok - headers are bound",
+			store: &mocks.Store{
+				CreateSubscriptionFn: func(ctx context.Context, s *subscription.Subscription) error {
+					require.Equal(t, &subscription.Subscription{
+						URL:     "https://cluster.example/change_data",
+						Schema:  "public",
+						Table:   "content_item",
+						Headers: map[string]string{"x-api-key": "secret"},
+					}, s)
+					return nil
+				},
+			},
+			payload:        bytes.NewBufferString(`{"url":"https://cluster.example/change_data","schema":"public","table":"content_item","headers":{"x-api-key":"secret"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusCreated,
+		},
+		{
 			name: "error - creating subscription",
 			store: &mocks.Store{
 				CreateSubscriptionFn: func(ctx context.Context, s *subscription.Subscription) error {
