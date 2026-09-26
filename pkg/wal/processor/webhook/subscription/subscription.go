@@ -13,7 +13,6 @@ type Subscription struct {
 	Schema     string   `json:"schema"`
 	Table      string   `json:"table"`
 	// Headers are optional HTTP headers sent on each webhook POST.
-	// Leave empty to keep the previous behaviour (no custom headers).
 	Headers map[string]string `json:"headers,omitempty"`
 }
 

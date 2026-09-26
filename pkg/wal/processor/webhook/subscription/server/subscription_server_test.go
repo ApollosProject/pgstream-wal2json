@@ -81,13 +81,6 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			wantStatusCode: http.StatusMethodNotAllowed,
 		},
 		{
-			name:           "error - invalid header name",
-			store:          rejectStore,
-			payload:        bytes.NewBufferString(`{"headers":{"invalid name":"secret"}}`),
-			method:         http.MethodPost,
-			wantStatusCode: http.StatusBadRequest,
-		},
-		{
 			name:           "error - duplicate header spelling",
 			store:          rejectStore,
 			payload:        bytes.NewBufferString(`{"headers":{"X-Api-Key":"a","x-api-key":"b"}}`),

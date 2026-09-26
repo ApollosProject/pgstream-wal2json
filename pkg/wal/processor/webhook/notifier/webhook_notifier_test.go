@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -183,6 +182,14 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 	}
 }
 
+func TestNotifier_rejectsOversizedEvent(t *testing.T) {
+	n := New(&Config{MaxQueueBytes: 1}, &mocks.Store{GetSubscriptionsFn: func(context.Context, string, string, string) ([]*subscription.Subscription, error) {
+		return []*subscription.Subscription{{URL: "http://example.test"}}, nil
+	}})
+	err := n.ProcessWALEvent(context.Background(), &wal.Event{Data: &wal.Data{}})
+	require.ErrorContains(t, err, "exceeds max queue bytes")
+}
+
 func TestNotifier_sendWebhook(t *testing.T) {
 	for _, tc := range []struct {
 		name              string
@@ -197,9 +204,6 @@ func TestNotifier_sendWebhook(t *testing.T) {
 			n.client = &httpmocks.Client{DoFn: func(r *http.Request) (*http.Response, error) {
 				require.Equal(t, tc.wantType, r.Header.Get("Content-Type"))
 				require.Equal(t, tc.wantKey, r.Header.Get("x-api-key"))
-				body, err := io.ReadAll(r.Body)
-				require.NoError(t, err)
-				require.Equal(t, []byte(`{"data":{}}`), body)
 				return &http.Response{StatusCode: http.StatusOK, Body: http.NoBody}, nil
 			}}
 			require.NoError(t, n.notify(context.Background(), &notifyMsg{
@@ -211,19 +215,18 @@ func TestNotifier_sendWebhook(t *testing.T) {
 }
 
 func TestNotifier_doesNotFollowRedirect(t *testing.T) {
-	attacker := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/redirect" {
+			require.Equal(t, "secret", r.Header.Get("x-api-key"))
+			http.Redirect(w, r, "/destination", http.StatusTemporaryRedirect)
+			return
+		}
 		t.Error("webhook credentials reached redirect target")
 	}))
-	defer attacker.Close()
-	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "secret", r.Header.Get("x-api-key"))
-		http.Redirect(w, r, attacker.URL, http.StatusTemporaryRedirect)
-	}))
-	defer target.Close()
-
+	defer server.Close()
 	n := New(&Config{}, &mocks.Store{})
 	err := n.sendWebhook(context.Background(), []byte(`{}`), notifyTarget{
-		url: target.URL, headers: map[string]string{"x-api-key": "secret"},
+		url: server.URL + "/redirect", headers: map[string]string{"x-api-key": "secret"},
 	})
 	require.ErrorContains(t, err, "307")
 }

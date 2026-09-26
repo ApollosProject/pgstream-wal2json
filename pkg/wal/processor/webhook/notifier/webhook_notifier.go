@@ -35,6 +35,7 @@ type Notifier struct {
 	queueBytesSema synclib.WeightedSemaphore
 	notifyChan     chan *notifyMsg
 	workerCount    uint
+	maxQueueBytes  int64
 }
 
 type subscriptionRetriever interface {
@@ -54,6 +55,7 @@ func New(cfg *Config, store subscriptionRetriever, opts ...Option) *Notifier {
 		subscriptionStore: store,
 		notifyChan:        make(chan *notifyMsg),
 		workerCount:       cfg.workerCount(),
+		maxQueueBytes:     cfg.maxQueueBytes(),
 		serialiser:        json.Marshal,
 	}
 
@@ -113,6 +115,9 @@ func (n *Notifier) ProcessWALEvent(ctx context.Context, walEvent *wal.Event) (er
 	// message to the channel. This will block until messages have been read
 	// from the channel and their size is released
 	msgSize := int64(msg.size())
+	if msgSize > n.maxQueueBytes {
+		return fmt.Errorf("webhook notification exceeds max queue bytes: %d > %d", msgSize, n.maxQueueBytes)
+	}
 	if !n.queueBytesSema.TryAcquire(msgSize) {
 		n.logger.Warn(nil, "webhook notifier: max queue bytes reached, processing blocked")
 		if err := n.queueBytesSema.Acquire(ctx, msgSize); err != nil {

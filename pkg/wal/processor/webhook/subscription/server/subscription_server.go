@@ -92,7 +92,7 @@ func (s *Server) subscribe(c echo.Context) error {
 		}
 		seen[canonical] = true
 		switch canonical {
-		case "Host", "Content-Length", "Transfer-Encoding", "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization", "Te", "Trailer", "Upgrade":
+		case "Host", "Content-Length", "Transfer-Encoding", "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization", "Proxy-Connection", "Te", "Trailer", "Upgrade":
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported webhook header"})
 		}
 	}
