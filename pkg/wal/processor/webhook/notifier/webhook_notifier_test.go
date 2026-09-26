@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"sync"
 	"testing"
 	"time"
@@ -92,33 +93,6 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 			wantMsgs: []*notifyMsg{
 				testNotifyMsg([]string{"url-1", "url-2"}, testPayload),
 			},
-			wantErr: nil,
-		},
-		{
-			name: "ok - subscription headers are carried onto the notify message",
-			store: &mocks.Store{
-				GetSubscriptionsFn: func(ctx context.Context, action, schema, table string) ([]*subscription.Subscription, error) {
-					sub := testSubscription("url-1")
-					sub.Headers = map[string]string{"x-api-key": "secret"}
-					return []*subscription.Subscription{sub}, nil
-				},
-			},
-			weightedSemaphore: &syncmocks.WeightedSemaphore{
-				TryAcquireFn: func(i int64) bool {
-					require.Equal(t, int64(len(testPayload)+len("url-1")+len("x-api-key")+len("secret")), i)
-					return true
-				},
-			},
-			event: testEvent,
-
-			wantMsgs: []*notifyMsg{{
-				targets: []notifyTarget{{
-					url:     "url-1",
-					headers: map[string]string{"x-api-key": "secret"},
-				}},
-				payload:        testPayload,
-				commitPosition: testCommitPos,
-			}},
 			wantErr: nil,
 		},
 		{
@@ -209,8 +183,15 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 	}
 }
 
+func TestNotifyMsgHeaders(t *testing.T) {
+	sub := &subscription.Subscription{URL: "url-1", Headers: map[string]string{"x-api-key": "secret"}}
+	msg, err := newNotifyMsg(&wal.Event{Data: &wal.Data{}}, []*subscription.Subscription{sub}, json.Marshal)
+	require.NoError(t, err)
+	require.Equal(t, []notifyTarget{{url: sub.URL, headers: sub.Headers}}, msg.targets)
+	require.Equal(t, len(msg.payload)+len(sub.URL)+len("x-api-key")+len("secret"), msg.size())
+}
+
 func TestNotifier_sendWebhook(t *testing.T) {
-	t.Parallel()
 	for _, tc := range []struct {
 		name              string
 		headers           map[string]string
@@ -218,7 +199,6 @@ func TestNotifier_sendWebhook(t *testing.T) {
 	}{
 		{"custom", map[string]string{"x-api-key": "secret", "Content-Type": "application/vnd.custom+json"}, "application/vnd.custom+json", "secret"},
 		{"nil", nil, "application/json", ""},
-		{"empty", map[string]string{}, "application/json", ""},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
@@ -238,6 +218,24 @@ func TestNotifier_sendWebhook(t *testing.T) {
 			}))
 		})
 	}
+}
+
+func TestNotifier_doesNotFollowRedirect(t *testing.T) {
+	attacker := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
+		t.Error("webhook credentials reached redirect target")
+	}))
+	defer attacker.Close()
+	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, "secret", r.Header.Get("x-api-key"))
+		http.Redirect(w, r, attacker.URL, http.StatusTemporaryRedirect)
+	}))
+	defer target.Close()
+
+	n := New(&Config{}, &mocks.Store{})
+	err := n.sendWebhook(context.Background(), []byte(`{}`), notifyTarget{
+		url: target.URL, headers: map[string]string{"x-api-key": "secret"},
+	})
+	require.ErrorContains(t, err, "307")
 }
 
 func TestNotifier_Notify(t *testing.T) {

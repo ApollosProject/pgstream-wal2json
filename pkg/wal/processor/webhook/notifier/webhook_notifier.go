@@ -48,6 +48,8 @@ func New(cfg *Config, store subscriptionRetriever, opts ...Option) *Notifier {
 		logger: loglib.NewNoopLogger(),
 		client: &http.Client{
 			Timeout: cfg.clientTimeout(),
+			// Never forward per-subscription credentials to redirect targets.
+			CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
 		},
 		subscriptionStore: store,
 		notifyChan:        make(chan *notifyMsg),
