@@ -85,6 +85,10 @@ func (s *Server) subscribe(c echo.Context) error {
 		if !httpguts.ValidHeaderFieldName(name) || !httpguts.ValidHeaderFieldValue(value) {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid webhook header"})
 		}
+		switch http.CanonicalHeaderKey(name) {
+		case "Host", "Content-Length", "Transfer-Encoding", "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization", "Te", "Trailer", "Upgrade":
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported webhook header"})
+		}
 	}
 
 	ctx := c.Request().Context()

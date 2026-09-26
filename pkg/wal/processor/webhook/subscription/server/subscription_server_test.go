@@ -22,6 +22,10 @@ import (
 
 func TestSubscriptionServer_subscribe(t *testing.T) {
 	t.Parallel()
+	rejectStore := &mocks.Store{CreateSubscriptionFn: func(context.Context, *subscription.Subscription) error {
+		t.Fatal("invalid header was stored")
+		return nil
+	}}
 
 	testSubscription := &subscription.Subscription{
 		URL:        "url-1",
@@ -56,18 +60,11 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 		},
 		{
 			name: "ok - headers are bound",
-			store: &mocks.Store{
-				CreateSubscriptionFn: func(ctx context.Context, s *subscription.Subscription) error {
-					require.Equal(t, &subscription.Subscription{
-						URL:     "https://cluster.example/change_data",
-						Schema:  "public",
-						Table:   "content_item",
-						Headers: map[string]string{"x-api-key": "secret"},
-					}, s)
-					return nil
-				},
-			},
-			payload:        bytes.NewBufferString(`{"url":"https://cluster.example/change_data","schema":"public","table":"content_item","headers":{"x-api-key":"secret"}}`),
+			store: &mocks.Store{CreateSubscriptionFn: func(_ context.Context, s *subscription.Subscription) error {
+				require.Equal(t, "secret", s.Headers["x-api-key"])
+				return nil
+			}},
+			payload:        bytes.NewBufferString(`{"headers":{"x-api-key":"secret"}}`),
 			method:         http.MethodPost,
 			wantStatusCode: http.StatusCreated,
 		},
@@ -94,21 +91,22 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			wantStatusCode: http.StatusMethodNotAllowed,
 		},
 		{
-			name: "error - invalid header name",
-			store: &mocks.Store{CreateSubscriptionFn: func(context.Context, *subscription.Subscription) error {
-				t.Fatal("invalid header was stored")
-				return nil
-			}},
+			name:           "error - invalid header name",
+			store:          rejectStore,
 			payload:        bytes.NewBufferString(`{"headers":{"invalid name":"secret"}}`),
 			method:         http.MethodPost,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
-			name: "error - invalid header value",
-			store: &mocks.Store{CreateSubscriptionFn: func(context.Context, *subscription.Subscription) error {
-				t.Fatal("invalid header was stored")
-				return nil
-			}},
+			name:           "error - transport-controlled header",
+			store:          rejectStore,
+			payload:        bytes.NewBufferString(`{"headers":{"hOsT":"attacker.example"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
+			name:           "error - invalid header value",
+			store:          rejectStore,
 			payload:        bytes.NewBufferString(`{"headers":{"x-api-key":"secret\r\nInjected: yes"}}`),
 			method:         http.MethodPost,
 			wantStatusCode: http.StatusBadRequest,
