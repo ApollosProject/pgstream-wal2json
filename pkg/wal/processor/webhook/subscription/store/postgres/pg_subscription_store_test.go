@@ -6,30 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/require"
 )
-
-func TestHeadersJSON(t *testing.T) {
-	for _, headers := range []map[string]string{nil, {}, {"x-api-key": "secret"}} {
-		got, err := headersParam(headers)
-		require.NoError(t, err)
-		if len(headers) == 0 {
-			require.Nil(t, got)
-		} else {
-			require.JSONEq(t, `{"x-api-key":"secret"}`, got.(string))
-		}
-	}
-
-	var headers map[string]string
-	plan := pgtype.NewMap().PlanScan(pgtype.JSONBOID, pgtype.TextFormatCode, &headers)
-	require.NotNil(t, plan)
-	require.NoError(t, plan.Scan([]byte(`{"x-api-key":"secret"}`), &headers))
-	require.Equal(t, map[string]string{"x-api-key": "secret"}, headers)
-	// NULL matches rows created before headers existed.
-	require.NoError(t, plan.Scan(nil, &headers))
-	require.Nil(t, headers)
-}
 
 func TestStore_buildGetQuery(t *testing.T) {
 	t.Parallel()

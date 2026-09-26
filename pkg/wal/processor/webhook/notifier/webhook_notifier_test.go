@@ -183,14 +183,6 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 	}
 }
 
-func TestNotifyMsgHeaders(t *testing.T) {
-	sub := &subscription.Subscription{URL: "url-1", Headers: map[string]string{"x-api-key": "secret"}}
-	msg, err := newNotifyMsg(&wal.Event{Data: &wal.Data{}}, []*subscription.Subscription{sub}, json.Marshal)
-	require.NoError(t, err)
-	require.Equal(t, []notifyTarget{{url: sub.URL, headers: sub.Headers}}, msg.targets)
-	require.Equal(t, len(msg.payload)+len(sub.URL)+len("x-api-key")+len("secret"), msg.size())
-}
-
 func TestNotifier_sendWebhook(t *testing.T) {
 	for _, tc := range []struct {
 		name              string

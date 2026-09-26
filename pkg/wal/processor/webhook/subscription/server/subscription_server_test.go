@@ -94,6 +94,26 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			wantStatusCode: http.StatusMethodNotAllowed,
 		},
 		{
+			name: "error - invalid header name",
+			store: &mocks.Store{CreateSubscriptionFn: func(context.Context, *subscription.Subscription) error {
+				t.Fatal("invalid header was stored")
+				return nil
+			}},
+			payload:        bytes.NewBufferString(`{"headers":{"invalid name":"secret"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
+			name: "error - invalid header value",
+			store: &mocks.Store{CreateSubscriptionFn: func(context.Context, *subscription.Subscription) error {
+				t.Fatal("invalid header was stored")
+				return nil
+			}},
+			payload:        bytes.NewBufferString(`{"headers":{"x-api-key":"secret\r\nInjected: yes"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
 			name: "error - invalid payload",
 			store: &mocks.Store{
 				CreateSubscriptionFn: func(ctx context.Context, s *subscription.Subscription) error {

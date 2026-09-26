@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/net/http/httpguts"
 
 	httplib "github.com/ApollosProject/pgstream-wal2json/internal/http"
 	loglib "github.com/ApollosProject/pgstream-wal2json/pkg/log"
@@ -79,6 +80,11 @@ func (s *Server) subscribe(c echo.Context) error {
 	subscription := &subscription.Subscription{}
 	if err := c.Bind(subscription); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+	for name, value := range subscription.Headers {
+		if !httpguts.ValidHeaderFieldName(name) || !httpguts.ValidHeaderFieldValue(value) {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid webhook header"})
+		}
 	}
 
 	ctx := c.Request().Context()
