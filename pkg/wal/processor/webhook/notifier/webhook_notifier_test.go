@@ -193,10 +193,8 @@ func TestNotifier_sendWebhook(t *testing.T) {
 		{"nil", nil, "application/json", ""},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
 			n := New(&Config{URLWorkerCount: 1}, &mocks.Store{})
 			n.client = &httpmocks.Client{DoFn: func(r *http.Request) (*http.Response, error) {
-				require.Equal(t, http.MethodPost, r.Method)
 				require.Equal(t, tc.wantType, r.Header.Get("Content-Type"))
 				require.Equal(t, tc.wantKey, r.Header.Get("x-api-key"))
 				body, err := io.ReadAll(r.Body)

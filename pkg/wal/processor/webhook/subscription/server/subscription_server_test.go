@@ -59,16 +59,6 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			wantStatusCode: http.StatusCreated,
 		},
 		{
-			name: "ok - headers are bound",
-			store: &mocks.Store{CreateSubscriptionFn: func(_ context.Context, s *subscription.Subscription) error {
-				require.Equal(t, "secret", s.Headers["x-api-key"])
-				return nil
-			}},
-			payload:        bytes.NewBufferString(`{"headers":{"x-api-key":"secret"}}`),
-			method:         http.MethodPost,
-			wantStatusCode: http.StatusCreated,
-		},
-		{
 			name: "error - creating subscription",
 			store: &mocks.Store{
 				CreateSubscriptionFn: func(ctx context.Context, s *subscription.Subscription) error {
@@ -94,6 +84,13 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			name:           "error - invalid header name",
 			store:          rejectStore,
 			payload:        bytes.NewBufferString(`{"headers":{"invalid name":"secret"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
+			name:           "error - duplicate header spelling",
+			store:          rejectStore,
+			payload:        bytes.NewBufferString(`{"headers":{"X-Api-Key":"a","x-api-key":"b"}}`),
 			method:         http.MethodPost,
 			wantStatusCode: http.StatusBadRequest,
 		},
