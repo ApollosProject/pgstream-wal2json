@@ -99,7 +99,7 @@ func (n *Notifier) ProcessWALEvent(ctx context.Context, walEvent *wal.Event) (er
 		if err != nil {
 			return fmt.Errorf("retrieving subscriptions: %w", err)
 		}
-		n.logger.Debug("matching subscriptions", loglib.Fields{"subscriptions": subscriptions})
+		n.logger.Debug("matching subscriptions", loglib.Fields{"count": len(subscriptions)})
 	}
 
 	msg, err := newNotifyMsg(walEvent, subscriptions, n.serialiser)

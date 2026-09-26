@@ -10,35 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestHeadersParam(t *testing.T) {
-	t.Parallel()
+func TestHeadersJSON(t *testing.T) {
+	for _, headers := range []map[string]string{nil, {}, {"x-api-key": "secret"}} {
+		got, err := headersParam(headers)
+		require.NoError(t, err)
+		if len(headers) == 0 {
+			require.Nil(t, got)
+		} else {
+			require.JSONEq(t, `{"x-api-key":"secret"}`, got.(string))
+		}
+	}
 
-	got, err := headersParam(nil)
-	require.NoError(t, err)
-	require.Nil(t, got)
-
-	got, err = headersParam(map[string]string{})
-	require.NoError(t, err)
-	require.Nil(t, got)
-
-	got, err = headersParam(map[string]string{"x-api-key": "secret"})
-	require.NoError(t, err)
-	encoded, ok := got.(string)
-	require.True(t, ok)
-	require.JSONEq(t, `{"x-api-key":"secret"}`, encoded)
-}
-
-func TestHeadersJSONScan(t *testing.T) {
-	t.Parallel()
-
-	m := pgtype.NewMap()
 	var headers map[string]string
-	plan := m.PlanScan(pgtype.JSONBOID, pgtype.TextFormatCode, &headers)
+	plan := pgtype.NewMap().PlanScan(pgtype.JSONBOID, pgtype.TextFormatCode, &headers)
 	require.NotNil(t, plan)
-
 	require.NoError(t, plan.Scan([]byte(`{"x-api-key":"secret"}`), &headers))
 	require.Equal(t, map[string]string{"x-api-key": "secret"}, headers)
-
 	// NULL matches rows created before headers existed.
 	require.NoError(t, plan.Scan(nil, &headers))
 	require.Nil(t, headers)

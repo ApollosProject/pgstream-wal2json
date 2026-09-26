@@ -211,66 +211,31 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 
 func TestNotifier_sendWebhook(t *testing.T) {
 	t.Parallel()
-
-	payload := []byte(`{"data":{}}`)
-
-	tests := []struct {
-		name    string
-		headers map[string]string
-
-		wantContentType string
-		wantAPIKey      string
+	for _, tc := range []struct {
+		name              string
+		headers           map[string]string
+		wantType, wantKey string
 	}{
-		{
-			name:            "headers from the subscription are sent",
-			headers:         map[string]string{"x-api-key": "secret", "Content-Type": "application/vnd.custom+json"},
-			wantContentType: "application/vnd.custom+json",
-			wantAPIKey:      "secret",
-		},
-		{
-			name:            "subscription without headers still sends",
-			headers:         nil,
-			wantContentType: "application/json",
-		},
-		{
-			name:            "empty headers still sends",
-			headers:         map[string]string{},
-			wantContentType: "application/json",
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
+		{"custom", map[string]string{"x-api-key": "secret", "Content-Type": "application/vnd.custom+json"}, "application/vnd.custom+json", "secret"},
+		{"nil", nil, "application/json", ""},
+		{"empty", map[string]string{}, "application/json", ""},
+	} {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-
-			var gotHeader http.Header
-			var gotMethod string
-			var gotBody []byte
 			n := New(&Config{URLWorkerCount: 1}, &mocks.Store{})
-			n.client = &httpmocks.Client{
-				DoFn: func(r *http.Request) (*http.Response, error) {
-					gotHeader = r.Header.Clone()
-					gotMethod = r.Method
-					body, err := io.ReadAll(r.Body)
-					require.NoError(t, err)
-					gotBody = body
-					return &http.Response{StatusCode: http.StatusOK, Body: http.NoBody}, nil
-				},
-			}
-
-			err := n.notify(context.Background(), &notifyMsg{
-				targets: []notifyTarget{{
-					url:     "http://example.test/change_data",
-					headers: tc.headers,
-				}},
-				payload: payload,
-			})
-			require.NoError(t, err)
-			require.Equal(t, http.MethodPost, gotMethod)
-			require.Equal(t, payload, gotBody)
-			require.Equal(t, tc.wantContentType, gotHeader.Get("Content-Type"))
-			require.Equal(t, tc.wantAPIKey, gotHeader.Get("x-api-key"))
+			n.client = &httpmocks.Client{DoFn: func(r *http.Request) (*http.Response, error) {
+				require.Equal(t, http.MethodPost, r.Method)
+				require.Equal(t, tc.wantType, r.Header.Get("Content-Type"))
+				require.Equal(t, tc.wantKey, r.Header.Get("x-api-key"))
+				body, err := io.ReadAll(r.Body)
+				require.NoError(t, err)
+				require.Equal(t, []byte(`{"data":{}}`), body)
+				return &http.Response{StatusCode: http.StatusOK, Body: http.NoBody}, nil
+			}}
+			require.NoError(t, n.notify(context.Background(), &notifyMsg{
+				targets: []notifyTarget{{url: "http://example.test/change_data", headers: tc.headers}},
+				payload: []byte(`{"data":{}}`),
+			}))
 		})
 	}
 }
