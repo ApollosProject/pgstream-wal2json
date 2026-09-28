@@ -35,6 +35,7 @@ type Notifier struct {
 	queueBytesSema synclib.WeightedSemaphore
 	notifyChan     chan *notifyMsg
 	workerCount    uint
+	maxQueueBytes  int64
 }
 
 type subscriptionRetriever interface {
@@ -48,10 +49,13 @@ func New(cfg *Config, store subscriptionRetriever, opts ...Option) *Notifier {
 		logger: loglib.NewNoopLogger(),
 		client: &http.Client{
 			Timeout: cfg.clientTimeout(),
+			// Never forward per-subscription credentials to redirect targets.
+			CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
 		},
 		subscriptionStore: store,
 		notifyChan:        make(chan *notifyMsg),
 		workerCount:       cfg.workerCount(),
+		maxQueueBytes:     cfg.maxQueueBytes(),
 		serialiser:        json.Marshal,
 	}
 
@@ -99,7 +103,7 @@ func (n *Notifier) ProcessWALEvent(ctx context.Context, walEvent *wal.Event) (er
 		if err != nil {
 			return fmt.Errorf("retrieving subscriptions: %w", err)
 		}
-		n.logger.Debug("matching subscriptions", loglib.Fields{"subscriptions": subscriptions})
+		n.logger.Debug("matching subscriptions", loglib.Fields{"count": len(subscriptions)})
 	}
 
 	msg, err := newNotifyMsg(walEvent, subscriptions, n.serialiser)
@@ -111,6 +115,9 @@ func (n *Notifier) ProcessWALEvent(ctx context.Context, walEvent *wal.Event) (er
 	// message to the channel. This will block until messages have been read
 	// from the channel and their size is released
 	msgSize := int64(msg.size())
+	if msgSize > n.maxQueueBytes {
+		return fmt.Errorf("webhook notification exceeds max queue bytes: %d > %d", msgSize, n.maxQueueBytes)
+	}
 	if !n.queueBytesSema.TryAcquire(msgSize) {
 		n.logger.Warn(nil, "webhook notifier: max queue bytes reached, processing blocked")
 		if err := n.queueBytesSema.Acquire(ctx, msgSize); err != nil {
@@ -133,7 +140,7 @@ func (n *Notifier) Notify(ctx context.Context) error {
 			n.queueBytesSema.Release(int64(msg.size()))
 			if err != nil {
 				n.logger.Error(err, "sending webhook event", loglib.Fields{
-					"urls":            msg.urls,
+					"urls":            msg.urls(),
 					"commit position": msg.commitPosition,
 					"payload":         string(msg.payload),
 				})
@@ -153,20 +160,20 @@ func (n *Notifier) Close() error {
 }
 
 func (n *Notifier) notify(ctx context.Context, msg *notifyMsg) error {
-	n.logger.Trace("notifying", loglib.Fields{"urls": msg.urls})
-	if len(msg.urls) > 0 {
-		urlChan := make(chan string, n.workerCount)
+	n.logger.Trace("notifying", loglib.Fields{"urls": msg.urls()})
+	if len(msg.targets) > 0 {
+		targetChan := make(chan notifyTarget, n.workerCount)
 		wg := &sync.WaitGroup{}
 		for i := 0; i < int(n.workerCount); i++ {
 			wg.Add(1)
-			go n.webhookWorker(ctx, wg, msg.payload, urlChan)
+			go n.webhookWorker(ctx, wg, msg.payload, targetChan)
 		}
 
-		for _, url := range msg.urls {
-			urlChan <- url
+		for _, target := range msg.targets {
+			targetChan <- target
 		}
 
-		close(urlChan)
+		close(targetChan)
 		wg.Wait()
 	}
 
@@ -179,24 +186,30 @@ func (n *Notifier) notify(ctx context.Context, msg *notifyMsg) error {
 	return nil
 }
 
-func (n *Notifier) webhookWorker(ctx context.Context, wg *sync.WaitGroup, payload []byte, urls <-chan string) {
+func (n *Notifier) webhookWorker(ctx context.Context, wg *sync.WaitGroup, payload []byte, targets <-chan notifyTarget) {
 	defer wg.Done()
-	for url := range urls {
-		if err := n.sendWebhook(ctx, payload, url); err != nil {
+	for target := range targets {
+		if err := n.sendWebhook(ctx, payload, target); err != nil {
 			n.logger.Error(err, "sending webhook payload", loglib.Fields{
 				"payload": payload,
-				"url":     url,
+				"url":     target.url,
 			})
 			continue
 		}
 	}
 }
 
-func (n *Notifier) sendWebhook(ctx context.Context, payload []byte, url string) error {
-	n.logger.Trace("sending webhook", loglib.Fields{"url": url})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
+func (n *Notifier) sendWebhook(ctx context.Context, payload []byte, target notifyTarget) error {
+	n.logger.Trace("sending webhook", loglib.Fields{"url": target.url})
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, target.url, bytes.NewBuffer(payload))
 	if err != nil {
 		return fmt.Errorf("building webhook payload request: %w", err)
+	}
+	for k, v := range target.headers {
+		req.Header.Set(k, v)
+	}
+	if req.Header.Get("Content-Type") == "" {
+		req.Header.Set("Content-Type", "application/json")
 	}
 
 	resp, err := n.client.Do(req)

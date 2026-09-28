@@ -24,8 +24,12 @@ func newTestSubscription(url, schema, table string, eventTypes []string) *subscr
 }
 
 func testNotifyMsg(urls []string, payload []byte) *notifyMsg {
+	targets := make([]notifyTarget, len(urls))
+	for i, url := range urls {
+		targets[i] = notifyTarget{url: url}
+	}
 	return &notifyMsg{
-		urls:           urls,
+		targets:        targets,
 		payload:        payload,
 		commitPosition: testCommitPos,
 	}

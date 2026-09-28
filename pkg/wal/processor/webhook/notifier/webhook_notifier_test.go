@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"sync"
 	"testing"
 	"time"
@@ -179,6 +180,55 @@ func TestNotifier_ProcessWALEvent(t *testing.T) {
 			require.Equal(t, tc.wantMsgs, msgs)
 		})
 	}
+}
+
+func TestNotifier_rejectsOversizedEvent(t *testing.T) {
+	n := New(&Config{MaxQueueBytes: 1}, &mocks.Store{GetSubscriptionsFn: func(context.Context, string, string, string) ([]*subscription.Subscription, error) {
+		return []*subscription.Subscription{{URL: "http://example.test"}}, nil
+	}})
+	err := n.ProcessWALEvent(context.Background(), &wal.Event{Data: &wal.Data{}})
+	require.ErrorContains(t, err, "exceeds max queue bytes")
+}
+
+func TestNotifier_sendWebhook(t *testing.T) {
+	for _, tc := range []struct {
+		name              string
+		headers           map[string]string
+		wantType, wantKey string
+	}{
+		{"custom", map[string]string{"x-api-key": "secret", "Content-Type": "application/vnd.custom+json"}, "application/vnd.custom+json", "secret"},
+		{"nil", nil, "application/json", ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			n := New(&Config{URLWorkerCount: 1}, &mocks.Store{})
+			n.client = &httpmocks.Client{DoFn: func(r *http.Request) (*http.Response, error) {
+				require.Equal(t, tc.wantType, r.Header.Get("Content-Type"))
+				require.Equal(t, tc.wantKey, r.Header.Get("x-api-key"))
+				return &http.Response{StatusCode: http.StatusOK, Body: http.NoBody}, nil
+			}}
+			require.NoError(t, n.notify(context.Background(), &notifyMsg{
+				targets: []notifyTarget{{url: "http://example.test/change_data", headers: tc.headers}},
+				payload: []byte(`{"data":{}}`),
+			}))
+		})
+	}
+}
+
+func TestNotifier_doesNotFollowRedirect(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/redirect" {
+			require.Equal(t, "secret", r.Header.Get("x-api-key"))
+			http.Redirect(w, r, "/destination", http.StatusTemporaryRedirect)
+			return
+		}
+		t.Error("webhook credentials reached redirect target")
+	}))
+	defer server.Close()
+	n := New(&Config{}, &mocks.Store{})
+	err := n.sendWebhook(context.Background(), []byte(`{}`), notifyTarget{
+		url: server.URL + "/redirect", headers: map[string]string{"x-api-key": "secret"},
+	})
+	require.ErrorContains(t, err, "307")
 }
 
 func TestNotifier_Notify(t *testing.T) {

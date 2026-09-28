@@ -12,6 +12,8 @@ type Subscription struct {
 	EventTypes []string `json:"event_types"`
 	Schema     string   `json:"schema"`
 	Table      string   `json:"table"`
+	// Headers are optional HTTP headers sent on each webhook POST.
+	Headers map[string]string `json:"headers,omitempty"`
 }
 
 func (s *Subscription) IsFor(action, schema, table string) bool {

@@ -22,6 +22,10 @@ import (
 
 func TestSubscriptionServer_subscribe(t *testing.T) {
 	t.Parallel()
+	rejectStore := &mocks.Store{CreateSubscriptionFn: func(context.Context, *subscription.Subscription) error {
+		t.Fatal("invalid header was stored")
+		return nil
+	}}
 
 	testSubscription := &subscription.Subscription{
 		URL:        "url-1",
@@ -75,6 +79,27 @@ func TestSubscriptionServer_subscribe(t *testing.T) {
 			payload:        bytes.NewBuffer(subscriptionBytes),
 			method:         http.MethodGet,
 			wantStatusCode: http.StatusMethodNotAllowed,
+		},
+		{
+			name:           "error - duplicate header spelling",
+			store:          rejectStore,
+			payload:        bytes.NewBufferString(`{"headers":{"X-Api-Key":"a","x-api-key":"b"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
+			name:           "error - transport-controlled header",
+			store:          rejectStore,
+			payload:        bytes.NewBufferString(`{"headers":{"hOsT":"attacker.example"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
+			name:           "error - invalid header value",
+			store:          rejectStore,
+			payload:        bytes.NewBufferString(`{"headers":{"x-api-key":"secret\r\nInjected: yes"}}`),
+			method:         http.MethodPost,
+			wantStatusCode: http.StatusBadRequest,
 		},
 		{
 			name: "error - invalid payload",

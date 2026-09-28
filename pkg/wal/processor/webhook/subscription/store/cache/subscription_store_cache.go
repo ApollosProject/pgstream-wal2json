@@ -121,7 +121,6 @@ func (s *Store) refresh(ctx context.Context) error {
 
 	s.logger.Debug("cache refreshed", loglib.Fields{
 		"subscription_total_count": len(s.cache),
-		"subscriptions":            s.cache,
 	})
 
 	return nil
